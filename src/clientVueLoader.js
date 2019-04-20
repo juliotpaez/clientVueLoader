@@ -511,7 +511,7 @@
                 created() {
                     const components = this.$options.components;
                     const autoNamedComponents = {};
-                    const rootUrl = this.$options._baseUrl ? this.$options._baseUrl : document.URL;
+                    const rootUrl = this.$data._baseUrl ? this.$data._baseUrl : document.URL;
 
                     // Parse auto named components.
                     if (components[that.autoNameProperty]) {
@@ -542,8 +542,9 @@
                             autoNamedComponents[matches[1]] =
                                 Vue.component(matches[1], VueComponent.createLoadFunction(componentURL, matches[1]));
                         }
+
+                        delete components[that.autoNameProperty];
                     }
-                    delete components[that.autoNameProperty];
 
                     // Parse the rest components.
                     for (let componentName in components) {
@@ -556,6 +557,18 @@
 
                     // Copy auto named components.
                     Object.assign(components, autoNamedComponents);
+                }
+            });
+
+            // Add $style support for module styles.
+            Object.defineProperty(Vue.prototype, "$style", {
+                enumerable: true,
+                configurable: true,
+                get() {
+                    return this.$data.$style;
+                },
+                set() {
+                    throw new Error("The $style property is read-only.");
                 }
             });
         }
@@ -624,42 +637,20 @@
                             exports.name = component.name;
                         }
 
-                        // Proxies the beforeCreate event of the component to fill the new data.
-                        const prevBeforeCreate = exports.beforeCreate;
-                        exports.beforeCreate = function () {
-                            // Add base url.
-                            this.$options._baseUrl = component.url;
-                            return (prevBeforeCreate instanceof Function) ? prevBeforeCreate.bind(this)() : prevBeforeCreate;
-                        };
-
-                        const prevCreated = exports.created;
-                        exports.created = function () {
-                            // Set styles for css modules.
-                            if (component.moduleStyles) {
-                                // We have to trick Vue to let us add the reactive properties.
-                                const save = this.$data.__ob__.vmCount;
-                                this.$data.__ob__.vmCount = null;
+                        exports.mixins = [{
+                            data: function () {
+                                const result = {
+                                    _baseUrl: component.url,
+                                    _component: component
+                                };
 
                                 for (let style in component.moduleStyles) {
-                                    Vue.set(this.$data, style, component.moduleStyles[style]);
-                                    // Add the proxy to use prop instead of $data.prop
-                                    Object.defineProperty(this, style, {
-                                        enumerable: true,
-                                        configurable: true,
-                                        get: function proxyGetter() {
-                                            return this.$data[style]
-                                        },
-                                        set: function proxySetter(val) {
-                                            this.$data[style] = val;
-                                        }
-                                    });
+                                    result[style] = component.moduleStyles[style];
                                 }
 
-                                this.$data.__ob__.vmCount = save;
+                                return result;
                             }
-
-                            return (prevCreated instanceof Function) ? prevCreated.bind(this)() : prevCreated;
-                        };
+                        }];
 
                         // Cache the result.
                         cache[url] = component;
