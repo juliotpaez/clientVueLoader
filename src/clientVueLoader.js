@@ -495,11 +495,12 @@
         }
     }
 
+    const pathRegex = /\/([a-zA-Z_][a-zA-Z_0-9]*(?:"-"?[a-zA-Z_0-9]+)*?)(?:\.[^\.]+)?$/;
+
     class VueComponent {
         constructor() {
             this.urlPrefix = "url:";
             this.autoNameProperty = "cvl-auto-name";
-            this.pathRegex = /\/([a-zA-Z_][a-zA-Z_0-9]*(?:"-"?[a-zA-Z_0-9]+)*?)(?:\.[^\.]+)?$/
         }
 
         // Methods ------------------------------------------------------------
@@ -529,7 +530,7 @@
                             }
 
                             const componentURL = new URL(url, rootUrl);
-                            const matches = componentURL.pathname.match(that.pathRegex);
+                            const matches = componentURL.pathname.match(pathRegex);
                             if (matches === null) {
                                 throw new Error(
                                     `The URL(${componentURL.pathname}) has not a correct name to set for an auto-component.`);
