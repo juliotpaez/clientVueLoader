@@ -497,7 +497,7 @@
 
     class VueComponent {
         constructor() {
-            this.urlPrefix = "cvl:";
+            this.urlPrefix = "url:";
             this.autoNameProperty = "cvl-auto-name";
             this.pathRegex = /\/([a-zA-Z_][a-zA-Z_0-9]*(?:"-"?[a-zA-Z_0-9]+)*?)(?:\.[^\.]+)?$/
         }
