@@ -567,7 +567,7 @@
 
         // Registers a custom processor for a language.
         registerLangProcessor(lang, processor) {
-            if (!(processor instanceof Function)) {
+            if (!(processor instanceof asyncFunctionPrototype)) {
                 throw new Error("The language processor must be a function.");
             }
 
