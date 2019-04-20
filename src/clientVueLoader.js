@@ -30,7 +30,8 @@
             // Check the result of the pre-processor.
             if (result !== null) {
                 if (typeof result !== 'string') {
-                    throw new Error(`The returned value of the ${context.langAttribute} processor for the <template> tag must be String.`);
+                    throw new Error(
+                        `The returned value of the ${context.langAttribute} processor for the <template> tag must be String.`);
                 }
 
                 context.content = result;
@@ -47,7 +48,8 @@
             // Check the result of the pre-processor.
             if (result !== null) {
                 if (!(result instanceof Object)) {
-                    throw new Error(`The returned value of the ${context.langAttribute} processor for the <script> tag must be an Object.`);
+                    throw new Error(
+                        `The returned value of the ${context.langAttribute} processor for the <script> tag must be an Object.`);
                 }
 
                 return result;
@@ -66,7 +68,8 @@
             const module = {exports: {}};
 
             try {
-                Function('exports', 'require', 'clientVueLoader', 'module', context.content).call(module.exports, module.exports, childModuleRequire, childLoader, module);
+                Function('exports', 'require', 'clientVueLoader', 'module', context.content)
+                    .call(module.exports, module.exports, childModuleRequire, childLoader, module);
             } catch (ex) {
                 // Check line number to show the error in a better way.
                 if (!('lineNumber' in ex)) {
@@ -91,7 +94,8 @@
             // Check the result of the pre-processor.
             if (result !== null) {
                 if (typeof result !== 'string') {
-                    throw new Error(`The returned value of the ${context.langAttribute} processor for the <template> tag must be String.`);
+                    throw new Error(
+                        `The returned value of the ${context.langAttribute} processor for the <template> tag must be String.`);
 
                 }
                 context.content = result;
@@ -106,21 +110,24 @@
             const module = context.element.hasAttribute('module');
 
             if (scoped + scopedInside + module > 1) {
-                throw new Error(`The <style> has more than one self-exclusive attribute: scoped, scoped-inside and module.\n ${context.content}`);
+                throw new Error(
+                    `The <style> has more than one self-exclusive attribute: scoped, scoped-inside and module.\n ${context.content}`);
             }
 
             context.component.head.appendChild(context.element);
 
             if (scoped) {
                 if (!hasTemplate) {
-                    throw new Error(`The <style> has the scoped attribute but there is no <template> tag in the vue file.\n ${context.component.content}`);
+                    throw new Error(
+                        `The <style> has the scoped attribute but there is no <template> tag in the vue file.\n ${context.component.content}`);
                 }
 
                 context.element.removeAttribute('scoped');
                 return scopeStyles(context, context.component.scopeId);
             } else if (scopedInside) {
                 if (!hasTemplate) {
-                    throw new Error(`The <style> has the scoped-inside attribute but there is no <template> tag in the vue file.\n ${context.component.content}`);
+                    throw new Error(
+                        `The <style> has the scoped-inside attribute but there is no <template> tag in the vue file.\n ${context.component.content}`);
                 }
 
                 context.element.removeAttribute('scoped-inside');
@@ -128,11 +135,13 @@
                 return scopeInsideStyles(context, context.component.scopeId);
             } else if (module) {
                 if (!hasTemplate) {
-                    throw new Error(`The <style> has the module attribute but there is no <template> tag in the vue file.\n ${context.component.content}`);
+                    throw new Error(
+                        `The <style> has the module attribute but there is no <template> tag in the vue file.\n ${context.component.content}`);
                 }
 
                 if (!hasScript) {
-                    throw new Error(`The <style> has the module attribute but there is no <script> tag in the vue file.\n ${context.component.content}`);
+                    throw new Error(
+                        `The <style> has the module attribute but there is no <script> tag in the vue file.\n ${context.component.content}`);
                 }
 
                 let moduleName = context.element.getAttribute('module');
@@ -231,7 +240,8 @@
         // Assigns the styles to the data of the component.
         Object.freeze($style);
         if (!context.component.script) {
-            throw new Error(`The <style module> tag cannot be compiled if there is no an <script> tag.\n${context.content}`);
+            throw new Error(
+                `The <style module> tag cannot be compiled if there is no an <script> tag.\n${context.content}`);
         }
 
         return [moduleName, $style];
@@ -423,7 +433,8 @@
                 return this;
             }
 
-            throw new Error(`There isn't a template or a script tag in the loaded vue document at url(${this.url})\n${responseText}`);
+            throw new Error(
+                `There isn't a template or a script tag in the loaded vue document at url(${this.url})\n${responseText}`);
         }
 
         // Normalize all tags loading their content from the src attribute.
@@ -507,25 +518,29 @@
                         const urls = components[that.autoNameProperty];
 
                         if (!(urls instanceof Array)) {
-                            throw new Error(`The ${that.autoNameProperty} property of components should be an array of Strings.`);
+                            throw new Error(
+                                `The ${that.autoNameProperty} property of components should be an array of Strings.`);
                         }
 
                         for (let url of urls) {
                             if (typeof (url) !== 'string') {
-                                throw new Error(`The ${that.autoNameProperty} property of components should be an array of Strings.`);
+                                throw new Error(
+                                    `The ${that.autoNameProperty} property of components should be an array of Strings.`);
                             }
 
                             const componentURL = new URL(url, rootUrl);
                             const matches = componentURL.pathname.match(that.pathRegex);
                             if (matches === null) {
-                                throw new Error(`The URL(${componentURL.pathname}) has not a correct name to set for an auto-component.`);
+                                throw new Error(
+                                    `The URL(${componentURL.pathname}) has not a correct name to set for an auto-component.`);
                             }
 
                             if (components[matches[1]]) {
                                 throw new Error(`There is already a component by name ${matches[1]}.`);
                             }
 
-                            autoNamedComponents[matches[1]] = Vue.component(matches[1], VueComponent.createLoadFunction(componentURL, matches[1]));
+                            autoNamedComponents[matches[1]] =
+                                Vue.component(matches[1], VueComponent.createLoadFunction(componentURL, matches[1]));
                         }
                     }
                     delete components[that.autoNameProperty];
@@ -579,9 +594,7 @@
 
         // Loads an element.
         async load(url, name) {
-
             return VueComponent.createLoadFunction(new URL(url), name)();
-
         }
 
         // Creates a load function that will be called whenever Vue needs the component.
@@ -600,7 +613,8 @@
                         // Set the templates.
                         if (component.template !== null) {
                             if (exports.template) {
-                                throw new Error("There is already a template function or string in module.exports that collides with the template tag (<template>) defined in the vue component.");
+                                throw new Error(
+                                    "There is already a template function or string in module.exports that collides with the template tag (<template>) defined in the vue component.");
                             }
                             exports.template = component.template.content;
                         }
