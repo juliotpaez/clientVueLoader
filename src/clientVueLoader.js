@@ -589,7 +589,7 @@
 
         // Registers a compile function for a html tag.
         registerCompileFunction(tag, compiler) {
-            if (!(compiler instanceof Function)) {
+            if (!(compiler instanceof asyncFunctionPrototype)) {
                 throw new Error("The compiler must be a function.");
             }
 
