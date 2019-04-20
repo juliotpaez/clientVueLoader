@@ -9,6 +9,11 @@
     } else {
         root.clientVueLoader = factory();
     }
+
+    // Auto installation.
+    if (root.Vue && root.Vue.use) {
+        root.Vue.use(root.clientVueLoader);
+    }
 })(this, function factory() {
     'use strict';
 
